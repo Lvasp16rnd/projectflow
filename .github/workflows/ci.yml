@@ -1,0 +1,39 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      # Make maven wrappers executable just in case
+      - name: Make maven wrappers executable
+        run: |
+          chmod +x ./request-service/mvnw
+          chmod +x ./notification-service/mvnw
+
+      - name: Test Request Service
+        working-directory: ./request-service
+        run: ./mvnw clean verify
+
+      - name: Test Notification Service
+        working-directory: ./notification-service
+        run: ./mvnw clean verify
