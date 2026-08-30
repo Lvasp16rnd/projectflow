@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: projectflow-postgres
+    environment:
+      POSTGRES_DB: projectflow
+      POSTGRES_USER: projectflow
+      POSTGRES_PASSWORD: projectflow
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  mongo:
+    image: mongo:7
+    container_name: projectflow-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  localstack:
+    image: localstack/localstack:3.7.2
+    container_name: projectflow-localstack
+    ports:
+      - "4566:4566"
+      - "4510-4559:4510-4559"
+    environment:
+      - SERVICES=sqs
+      - DEBUG=0
+    volumes:
+      - ./localstack-init.sh:/etc/localstack/init/ready.d/init-sqs.sh
+      - localstack-data:/var/lib/localstack
+
+volumes:
+  postgres-data:
+  mongo-data:
+  localstack-data:

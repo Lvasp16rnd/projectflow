@@ -1,3 +1,26 @@
 spring:
   application:
     name: request-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/projectflow
+    username: projectflow
+    password: projectflow
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+
+  flyway:
+    enabled: true
+
+  cloud:
+    aws:
+      region:
+        static: us-east-1
+      credentials:
+        access-key: test
+        secret-key: test
+      sqs:
+        endpoint: http://localhost:4566
