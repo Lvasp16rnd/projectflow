@@ -25,20 +25,22 @@ public class OutboxAdapter implements OutboxPort {
 
     @Override
     public void save(DomainEvent event) {
+        UUID eventId = UUID.randomUUID();
         OutboxEntity entity = new OutboxEntity(
-                UUID.randomUUID(),
+                eventId,
                 event.aggregateId().toString(),
                 event.eventType(),
-                serialize(event),
+                serialize(eventId, event),
                 LocalDateTime.now(),
                 null
         );
         repository.save(entity);
     }
 
-    private String serialize(DomainEvent event) {
+    private String serialize(UUID eventId, DomainEvent event) {
         try {
             ObjectNode node = (ObjectNode) JSON_MAPPER.valueToTree(event);
+            node.put("eventId", eventId.toString());
             node.put("eventType", event.eventType());
             node.put("aggregateId", event.aggregateId().toString());
             return JSON_MAPPER.writeValueAsString(node);

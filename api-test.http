@@ -1,0 +1,20 @@
+### Criar uma solicitação
+POST http://localhost:8080/requests
+Content-Type: application/json
+
+{
+  "title": "Acesso ao GitHub Enterprise",
+  "requesterId": "user-123",
+  "category": "TI",
+  "priority": "HIGH"
+}
+
+###
+
+### Alterar status da solicitação (Pegue o ID retornado no passo anterior e cole aqui)
+PATCH http://localhost:8080/requests/b5e6d05b-e896-42ac-9940-2ff2cb032f3f/status
+Content-Type: application/json
+
+{
+  "targetStatus": "ANALYSIS"
+}
