@@ -29,3 +29,8 @@ Thumbs.db
 .env
 /markdown/
 /.agents/
+
+# Frontend
+/frontend/node_modules/
+/frontend/dist/
+/frontend/.angular/

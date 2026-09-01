@@ -1,0 +1,27 @@
+<div class="login-wrapper">
+  <div class="login-glass-panel">
+    <div class="login-header">
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <h2>ProjectFlow</h2>
+      </div>
+      <p>Faça login para continuar</p>
+    </div>
+
+    @if (error) {
+      <div class="alert-error">{{ error }}</div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="username">Usuário</label>
+        <input id="username" type="text" formControlName="username" placeholder="Digite seu usuário (admin)">
+      </div>
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input id="password" type="password" formControlName="password" placeholder="Digite sua senha (admin)">
+      </div>
+      <button type="submit" class="btn-primary" [disabled]="form.invalid">Entrar na Plataforma</button>
+    </form>
+  </div>
+</div>
