@@ -4,12 +4,14 @@ import com.projectflow.request.application.dto.ChangeStatusCommand;
 import com.projectflow.request.application.dto.CreateRequestCommand;
 import com.projectflow.request.application.usecase.ChangeRequestStatusUseCase;
 import com.projectflow.request.application.usecase.CreateRequestUseCase;
+import com.projectflow.request.application.usecase.ListRequestsUseCase;
 import com.projectflow.request.domain.model.Request;
 import com.projectflow.request.presentation.dto.ChangeStatusRequest;
 import com.projectflow.request.presentation.dto.CreateRequestRequest;
 import com.projectflow.request.presentation.dto.RequestResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -27,10 +30,22 @@ public class RequestController {
 
     private final CreateRequestUseCase createRequestUseCase;
     private final ChangeRequestStatusUseCase changeRequestStatusUseCase;
+    private final ListRequestsUseCase listRequestsUseCase;
 
-    public RequestController(CreateRequestUseCase createRequestUseCase, ChangeRequestStatusUseCase changeRequestStatusUseCase) {
+    public RequestController(CreateRequestUseCase createRequestUseCase,
+                             ChangeRequestStatusUseCase changeRequestStatusUseCase,
+                             ListRequestsUseCase listRequestsUseCase) {
         this.createRequestUseCase = createRequestUseCase;
         this.changeRequestStatusUseCase = changeRequestStatusUseCase;
+        this.listRequestsUseCase = listRequestsUseCase;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<RequestResponse>> list() {
+        List<RequestResponse> responses = listRequestsUseCase.execute().stream()
+                .map(RequestResponse::from)
+                .toList();
+        return ResponseEntity.ok(responses);
     }
 
     @PostMapping

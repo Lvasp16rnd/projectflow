@@ -96,7 +96,7 @@ request-service/src/main/java/com/projectflow/request/
 - [x] Transactional Outbox Pattern implementado e provado via Testcontainers
 - [x] Módulo Consumidor: Notification Service (MongoDB Auditoria + Idempotência via DLQ)
 - [x] Orquestração Local com Docker Compose (Postgres, Mongo, LocalStack)
-- [ ] Interface (Angular) / Workflow Service
-
+- [x] Interface Frontend (Angular 18 com Glassmorphism)
+- [ ] Workflow Service
 ---
 *Desenvolvido como demonstração de padrões arquiteturais avançados e engenharia de software resiliente.*

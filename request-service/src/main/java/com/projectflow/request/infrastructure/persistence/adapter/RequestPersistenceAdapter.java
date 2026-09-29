@@ -6,8 +6,10 @@ import com.projectflow.request.domain.port.out.RequestRepository;
 import com.projectflow.request.infrastructure.persistence.SpringDataRequestRepository;
 import com.projectflow.request.infrastructure.persistence.entity.RequestEntity;
 import com.projectflow.request.infrastructure.persistence.mapper.RequestMapper;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,5 +40,12 @@ public class RequestPersistenceAdapter implements RequestRepository {
     @Override
     public Optional<Request> findById(UUID id) {
         return repository.findById(id).map(mapper::toDomain);
+    }
+
+    @Override
+    public List<Request> findAll() {
+        return repository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream()
+                .map(mapper::toDomain)
+                .toList();
     }
 }

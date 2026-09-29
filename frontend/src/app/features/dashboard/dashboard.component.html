@@ -1,0 +1,116 @@
+<main class="dashboard">
+  <!-- KPI Stats -->
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon icon-purple">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+      </div>
+      <div class="kpi-info">
+        <h3>Total</h3>
+        <p class="kpi-value">{{ totalRequests() }}</p>
+      </div>
+    </div>
+    
+    <div class="kpi-card">
+      <div class="kpi-icon icon-orange">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+      </div>
+      <div class="kpi-info">
+        <h3>Em Análise</h3>
+        <p class="kpi-value">{{ analysisRequests() }}</p>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon icon-blue">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+      </div>
+      <div class="kpi-info">
+        <h3>Aprovadas</h3>
+        <p class="kpi-value">{{ approvedRequests() }}</p>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon icon-green">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+      </div>
+      <div class="kpi-info">
+        <h3>Concluídas</h3>
+        <p class="kpi-value">{{ doneRequests() }}</p>
+      </div>
+    </div>
+  </section>
+
+  <header class="dashboard__header">
+    <div>
+      <h1>Solicitações</h1>
+      <p class="subtitle">Acompanhe e movimente seus chamados corporativos.</p>
+    </div>
+    <button type="button" class="btn btn--primary" (click)="openForm()">+ Nova Solicitação</button>
+  </header>
+
+  @if (error()) {
+    <div class="banner banner--error">
+      <span>{{ error() }}</span>
+      <button type="button" class="icon-btn" aria-label="Dispensar" (click)="dismissError()">&times;</button>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="state">
+      <span class="spinner" aria-hidden="true"></span>
+      <p>Carregando solicitações…</p>
+    </div>
+  } @else if (requests().length === 0) {
+    <div class="state">
+      <p class="state__title">Nenhum chamado ainda</p>
+      <p class="state__hint">Crie o primeiro chamado para começar o fluxo de aprovação.</p>
+    </div>
+  } @else {
+    <div class="grid">
+      @for (request of requests(); track request.id) {
+        <article class="card">
+          <div class="card__top">
+            <span class="badge badge--category">{{ categoryLabels[request.category] }}</span>
+            <span class="badge priority--{{ request.priority.toLowerCase() }}">{{ priorityLabels[request.priority] }}</span>
+          </div>
+
+          <h2 class="card__title">{{ request.title }}</h2>
+
+          <div class="card__meta">
+            <span>Por <strong>{{ request.requesterId }}</strong></span>
+            <span>{{ request.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+
+          <div class="card__footer">
+            <span class="status status--{{ request.status.toLowerCase() }}">{{ statusLabels[request.status] }}</span>
+
+            @if (allowedTransitions(request.status).length > 0) {
+              <div class="actions">
+                @for (target of allowedTransitions(request.status); track target) {
+                  <button
+                    type="button"
+                    class="btn btn--small"
+                    [disabled]="busyId() === request.id"
+                    (click)="changeStatus(request, target)"
+                  >
+                    {{ statusLabels[target] }}
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  }
+
+  @if (showForm()) {
+    <div class="modal-overlay">
+      <div class="modal-content">
+        <app-request-form (created)="onCreated()" (close)="closeForm()" />
+      </div>
+    </div>
+  }
+</main>
