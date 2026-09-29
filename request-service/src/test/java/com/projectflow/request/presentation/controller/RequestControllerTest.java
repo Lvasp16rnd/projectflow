@@ -5,6 +5,7 @@ import com.projectflow.request.application.dto.CreateRequestCommand;
 import com.projectflow.request.application.exception.RequestNotFoundException;
 import com.projectflow.request.application.usecase.ChangeRequestStatusUseCase;
 import com.projectflow.request.application.usecase.CreateRequestUseCase;
+import com.projectflow.request.application.usecase.ListRequestsUseCase;
 import com.projectflow.request.domain.exception.DomainRuleException;
 import com.projectflow.request.domain.exception.InvalidTransitionException;
 import com.projectflow.request.domain.model.Category;
@@ -45,6 +46,9 @@ class RequestControllerTest {
 
     @MockitoBean
     private ChangeRequestStatusUseCase changeRequestStatusUseCase;
+
+    @MockitoBean
+    private ListRequestsUseCase listRequestsUseCase;
 
     @Test
     void shouldCreateRequestAndReturn201WithLocation() throws Exception {
@@ -178,5 +182,16 @@ class RequestControllerTest {
                         .content("{}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors[0].field").value("targetStatus"));
+    }
+
+    @Test
+    void shouldListRequestsAndReturn200() throws Exception {
+        when(listRequestsUseCase.execute()).thenReturn(java.util.List.of());
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/requests")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(listRequestsUseCase).execute();
     }
 }
